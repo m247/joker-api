@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "joker-api"
   gem.require_paths = ["lib"]
   gem.version       = JokerAPI::VERSION
+
+  gem.add_dependency 'httparty'
+  gem.add_dependency 'activesupport'
 end
