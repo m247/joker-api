@@ -45,6 +45,8 @@ module JokerAPI
       @last_error
     end
 
+    include Operations::QueryContactList
+
     include Operations::QueryNsList
     include Operations::NsCreate
     include Operations::NsDelete
