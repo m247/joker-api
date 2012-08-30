@@ -2,6 +2,7 @@ require 'httparty'
 require 'active_support/core_ext/object/blank'
 
 require File.expand_path('../errors', __FILE__)
+require File.expand_path('../operations', __FILE__)
 
 module JokerAPI
   class Client
