@@ -46,6 +46,9 @@ module JokerAPI
     end
 
     include Operations::QueryNsList
+    include Operations::NsCreate
+    include Operations::NsDelete
+    include Operations::NsModify
 
     protected
       def default_options
