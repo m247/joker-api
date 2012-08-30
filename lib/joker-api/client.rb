@@ -45,6 +45,8 @@ module JokerAPI
       @last_error
     end
 
+    include Operations::QueryNsList
+
     protected
       def default_options
         @default_options
