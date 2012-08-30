@@ -60,6 +60,8 @@ module JokerAPI
     include Operations::NsDelete
     include Operations::NsModify
 
+    include Operations::QueryWhois
+
     protected
       def default_options
         @default_options

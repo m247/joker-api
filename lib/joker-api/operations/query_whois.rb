@@ -21,6 +21,27 @@ module JokerAPI
       def query_whois(query)
         query.assert_valid_keys(:domain, :contact, :host)
         raise ArgumentError, "only one object may be requested at once" unless query.length == 1
+
+        response = perform_request('query-whois', query)
+
+        if response.error? && response.error.code == OBJECT_NOT_FOUND_CODE
+          raise ObjectNotFound, "#{query.keys[0]} object: #{query.values[0]} not found"
+        end
+
+        result = {}
+        response.body.each_line do |line|
+          key, value = line.strip.split(": ", 2)
+          key = key.sub("#{query.keys[0]}.", '')
+
+          if key =~ /\.date$/
+            key = key.sub(".date", "")
+            value = Time.parse(value)
+          end
+
+          result.store(key, value)
+        end
+
+        result
       end
     end
   end
