@@ -53,6 +53,8 @@ module JokerAPI
 
     include Operations::QueryContactList
 
+    include Operations::QueryDomainList
+
     include Operations::QueryNsList
     include Operations::NsCreate
     include Operations::NsDelete
