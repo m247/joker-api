@@ -45,6 +45,12 @@ module JokerAPI
       @last_error
     end
 
+    # Returns the number of seconds the last request/response took
+    # @return [Float]
+    def response_time
+      @response_time
+    end
+
     include Operations::QueryContactList
 
     include Operations::QueryNsList
@@ -66,7 +72,11 @@ module JokerAPI
           query = query.merge('auth-sid' => @auth_sid) if @auth_sid
           options = options.merge(:query => query) unless query.empty?
 
-          @response = Response.new(self.class.get(path, options))
+          response_data = stopwatch do
+            self.class.get(path, options)
+          end
+
+          @response = Response.new(response_data)
           store_response_information(@response)
 
           @response
@@ -78,6 +88,13 @@ module JokerAPI
       def store_response_information(response)
         @last_error = response.error if response.error?
         @balance = response.account_balance || @balance
+      end
+
+      def stopwatch
+        start = Time.now.utc.to_f
+        result = yield
+        @response_time = Time.now.utc.to_f - start
+        return result
       end
   end
 end
