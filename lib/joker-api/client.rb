@@ -1,5 +1,7 @@
 require 'httparty'
 
+require File.expand_path('../errors', __FILE__)
+
 module JokerAPI
   class Client
     include HTTParty
