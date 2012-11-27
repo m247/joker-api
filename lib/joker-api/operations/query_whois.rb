@@ -36,6 +36,11 @@ module JokerAPI
           if key =~ /\.date$/
             key = key.sub(".date", "")
             value = Time.parse(value)
+          elsif key =~ /nservers\.nserver\.handle$/
+            key = "nservers"
+            value = (result[key] || []) << value
+          elsif key =~ /nservers\.nserver\.no$/
+            next
           end
 
           result.store(key, value)
