@@ -63,6 +63,8 @@ module JokerAPI
 
     include Operations::QueryWhois
 
+    include Operations::ResultRetrieve
+
     protected
       def default_options
         @default_options

@@ -25,5 +25,7 @@ module JokerAPI
     autoload :NsModify,             File.expand_path('../operations/ns_modify.rb', __FILE__)
 
     autoload :QueryWhois,           File.expand_path('../operations/query_whois.rb', __FILE__)
+
+    autoload :ResultRetrieve,       File.expand_path('../operations/result_retrieve.rb', __FILE__)
   end
 end
