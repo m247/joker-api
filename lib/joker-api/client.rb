@@ -62,6 +62,9 @@ module JokerAPI
     include Operations::DomainLock
     include Operations::DomainUnlock
 
+    include Operations::DomainGetProperty
+    include Operations::DomainSetProperty
+
     include Operations::QueryNsList
     include Operations::NsCreate
     include Operations::NsDelete
@@ -70,6 +73,22 @@ module JokerAPI
     include Operations::QueryWhois
 
     include Operations::ResultRetrieve
+
+    # @param [String] domain Domain name
+    # @param [Boolean] value Enable/disable autorenew
+    # @see Operations::DomainSetProperty#domain_set_property
+    def domain_autorenew(domain, value = nil)
+      return domain_get_property(domain, 'autorenew') == "1" if value.nil?
+      domain_set_property(domain, 'autorenew', value ? "1" : "0")
+    end
+
+    # @param [String] domain Domain name
+    # @param [Boolean] value Enable/disable WHOIS opt out
+    # @see Operations::DomainSetProperty#domain_set_property
+    def domain_whois_optout(domain, value = nil)
+      return domain_get_property(domain, 'whois-opt-out') == "1" if value.nil?
+      domain_set_property(domain, 'whois-opt-out', value ? "1" : "0")
+    end
 
     protected
       def default_options
