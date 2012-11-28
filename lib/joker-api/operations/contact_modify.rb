@@ -21,7 +21,16 @@ module JokerAPI
       # @option fields [String] :extension Telephone extension
       # @option fields [String] :fax Fax number
       def contact_modify(handle, fields = {})
+        fields['individual'] = fields.delete(:individual) ? 'Y' : 'N'
+        fields['postal-code'] = fields.delete(:postal_code)
 
+        Array(fields.delete(:address)).each_with_index do |addr, idx|
+          break if idx > 2
+          fields["address-#{idx + 1}"] = addr
+        end
+
+        response = perform_request('contact-modify', fields.merge(:handle => handle))
+        response.success?
       end
     end
   end
