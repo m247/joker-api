@@ -52,6 +52,9 @@ module JokerAPI
     end
 
     include Operations::QueryContactList
+    include Operations::ContactCreate
+    include Operations::ContactDelete
+    include Operations::ContactModify
 
     include Operations::QueryDomainList
     include Operations::DomainDelete
