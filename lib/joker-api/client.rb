@@ -59,6 +59,9 @@ module JokerAPI
     include Operations::QueryDomainList
     include Operations::DomainDelete
 
+    include Operations::DomainLock
+    include Operations::DomainUnlock
+
     include Operations::QueryNsList
     include Operations::NsCreate
     include Operations::NsDelete
