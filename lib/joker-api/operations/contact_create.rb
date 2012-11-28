@@ -1,4 +1,5 @@
 require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/object/blank'
 
 module JokerAPI
   module Operations
@@ -20,8 +21,41 @@ module JokerAPI
       # @option fields [String] :phone Telephone number in ITU format
       # @option fields [String] :extension Telephone extension. Optional field.
       # @option fields [String] :fax Fax number. Optional field.
+      # @return [String,False] The contact handle if successful, false on error
       def contact_create(fields = {})
+        raise ArgumentError, ":organization required if :individual is false" if fields[:individual] && fields[:individual] == false && fields[:organization].blank?
+        raise ArgumentError, ":name or :fname and :lname are required" if fields[:name].blank? && fields[:fname].blank? && fields[:lname].blank?
 
+        [:email, :address, :city, :postal_code, :country, :phone].each do |field|
+          raise ArgumentError, "field :#{field} is required" if fields[field].blank?
+        end
+
+        fields['individual'] = fields.delete(:individual) ? 'Y' : 'N'
+        fields['postal-code'] = fields.delete(:postal_code)
+
+        Array(fields.delete(:address)).each_with_index do |addr, idx|
+          break if idx > 2
+          fields["address-#{idx + 1}"] = addr
+        end
+
+        response = perform_request('contact-create', fields)
+        return false unless response.success?
+
+        begin
+          sleep 0.5 # Give Joker some time to process the request
+          results = result_retrieve(response)
+
+          case results["Completion-Status"]
+          when "ack"  # Request Processed
+            return results["Object-Name"]
+          when "?"    # Request still pending
+            raise IncompleteRequest
+          else        # dunno really
+            return false
+          end
+        rescue IncompleteRequest
+          retry
+        end
       end
     end
   end
