@@ -71,6 +71,12 @@ module JokerAPI
 
     include Operations::QueryDomainList
     include Operations::DomainDelete
+    include Operations::DomainModify
+    include Operations::DomainOwnerChange
+    include Operations::DomainRegister
+    include Operations::DomainRenew
+    include Operations::DomainTransferIn
+    include Operations::DomainTransferGetAuthId
 
     include Operations::DomainLock
     include Operations::DomainUnlock
