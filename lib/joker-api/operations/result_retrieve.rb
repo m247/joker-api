@@ -6,9 +6,9 @@ module JokerAPI
         proc_id = proc_id.proc_id if proc_id.kind_of?(Response)
 
         response = perform_request('result-retrieve', {'Proc-ID' => proc_id})
-        results  = response.body.split("\n\n", 2)[0]
+        results, body = response.body.split("\n\n", 2)
 
-        results.split("\n").inject({}) do |hash, result|
+        results.split("\n").inject({'body' => body}) do |hash, result|
           hash.store(*result.split(": ",2))
           hash
         end
