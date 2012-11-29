@@ -8,6 +8,14 @@ module JokerAPI
   class Client
     include HTTParty
 
+    DEFAULT_RESULT_POLL_INTERVAL = 0.5
+    @@result_poll_interval = nil
+
+    # @param [Float,nil] interval
+    def self.set_result_poll_interval(interval)
+      @@result_poll_interval = interval
+    end
+
     attr_reader :balance, :tlds
 
     def initialize(username, password, host = 'dmapi.joker.com', options = {})
@@ -21,6 +29,11 @@ module JokerAPI
 
     def inspect
       "#<#{self.class.name} #{@default_options[:base_uri]} (#{@username})#{@auth_sid && " logged in"}>"
+    end
+
+    # @param [Float,nil] interval
+    def set_result_poll_interval(interval)
+      @result_poll_interval = interval
     end
 
     def login
@@ -127,6 +140,32 @@ module JokerAPI
         result = yield
         @response_time = Time.now.utc.to_f - start
         return result
+      end
+
+      def result_poll_interval
+        (@result_poll_interval || @@result_poll_interval || DEFAULT_RESULT_POLL_INTERVAL).to_f
+      end
+
+      # @param [Response] response
+      # @yield [result] Gives the 'result-retrieve' headers to the block
+      # @yieldparam result [Hash] The 'result-retrieve' headers as a hash
+      # @return [Object,Boolean] False on errors, whatever the block results on success
+      def wait_for_result(response)
+        begin
+          sleep result_poll_interval
+          result = result_retrieve(response)
+
+          case result["Completion-Status"]
+          when "ack"  # Request Processed
+            return yield result
+          when "?"    # Request still pending
+            raise IncompleteRequest
+          else        # dunno really
+            return false
+          end
+        rescue IncompleteRequest
+          retry
+        end
       end
   end
 end
