@@ -22,6 +22,7 @@ module JokerAPI
       # @option fields [String] :fax Fax number. Optional field.
       # @return [String,False] The contact handle if successful, false on error
       def contact_create(fields = {})
+        fields.assert_valid_keys(:tld, :name, :fname, :lname, :title, :individual, :organization, :email, :address, :city, :state, :postal_code, :country, :phone, :extension, :fax)
         raise ArgumentError, ":organization required if :individual is false" if fields[:individual] && fields[:individual] == false && fields[:organization].blank?
         raise ArgumentError, ":name or :fname and :lname are required" if fields[:name].blank? && fields[:fname].blank? && fields[:lname].blank?
 
@@ -40,20 +41,8 @@ module JokerAPI
         response = perform_request('contact-create', fields)
         return false unless response.success?
 
-        begin
-          sleep 0.5 # Give Joker some time to process the request
-          results = result_retrieve(response)
-
-          case results["Completion-Status"]
-          when "ack"  # Request Processed
-            return results["Object-Name"]
-          when "?"    # Request still pending
-            raise IncompleteRequest
-          else        # dunno really
-            return false
-          end
-        rescue IncompleteRequest
-          retry
+        wait_for_result(response) do |result|
+          result["Object-Name"]
         end
       end
     end
