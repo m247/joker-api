@@ -36,7 +36,7 @@ module JokerAPI
         end
 
         response = perform_request('domain-modify', options.merge(:domain => domain))
-        return response.success?
+        response.success?
       end
     end
   end
