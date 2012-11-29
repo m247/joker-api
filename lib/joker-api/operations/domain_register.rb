@@ -4,7 +4,8 @@ module JokerAPI
   module Operations
     module DomainRegister
       DEFAULT_OPTIONS = { :status => %(production), :period => 12 } # period in months
-      VALID_OPTIONS = DEFAULT_OPTIONS.keys + [:owner_c, :billing_c, :admin_c, :tech_c, :ns_list]
+      REQUIRED_OPTIONS = [:period, :owner_c, :billing_c, :admin_c, :tech_c, :ns_list]
+      VALID_OPTIONS = REQUIRED_OPTIONS + [:autorenew, :language, :registrar_tag]
 
       # @param [String] domain Domain name to register
       # @param [Hash] options
@@ -14,13 +15,28 @@ module JokerAPI
       # @option options [String] :tech_c Technical contact handle
       # @option options [Array<String>] :ns_list List of nameservers to use
       def domain_register(domain, options = {})
+        raise ArgumentError, "unsupported TLD" unless self.tlds.any? { |tld| domain.end_with?(".#{tld}") }
         options.assert_valid_keys(VALID_OPTIONS)
         options = DEFAULT_OPTIONS.merge(options)
 
-        # TODO: assert all VALID_OPTIONS keys are present
-        # TODO: check domain TLD is one of self#tlds
+        REQUIRED_OPTIONS.each do |key|
+          raise ArgumentError, "option :#{key} is required" if options[key].blank?
+        end
 
-        ns_list = options.delete(:ns_list).join(":")
+        options["tech-c"] = options.delete(:tech_c)
+        options["owner-c"] = options.delete(:owner_c)
+        options["admin-c"] = options.delete(:admin_c)
+        options["billing-c"] = options.delete(:billing_c)
+
+        options["ns-list"] = options.delete(:ns_list).join(":")
+
+        response = perform_request('domain-register', options.merge(:domain => domain))
+        return false unless response.success?
+
+        # We wait to make sure the request has been fully processed before returning
+        wait_for_result(response) do |result|
+          return result["Object-Name"] == domain
+        end
       end
     end
   end
