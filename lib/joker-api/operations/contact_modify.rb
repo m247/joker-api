@@ -21,6 +21,7 @@ module JokerAPI
       # @option fields [String] :extension Telephone extension
       # @option fields [String] :fax Fax number
       def contact_modify(handle, fields = {})
+        fields.assert_valid_keys(:name, :fname, :lname, :title, :individual, :organization, :email, :address, :city, :state, :postal_code, :country, :phone, :extension, :fax)
         fields['individual'] = fields.delete(:individual) ? 'Y' : 'N'
         fields['postal-code'] = fields.delete(:postal_code)
 
