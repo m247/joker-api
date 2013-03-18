@@ -2,12 +2,18 @@ module JokerAPI
   module Operations
     module DomainRenew
       # @param [String] domain Domain name to renew
-      # @param [Integer] period Number of months to renew the domain for
-      def domain_renew(domain, period)
-        raise ArgumentError, "period must be integer" unless period.kind_of?(Fixnum)
+      # @param [Integer,#year] period_or_date Expiry date or number of months to renew the domain for
+      def domain_renew(domain, period_or_date)
+        options = {:domain => domain}
+        if period_or_date.kind_of?(Fixnum)
+          options[:period] = period_or_date.to_s
+        elsif period_or_date.respond_to?(:year)
+          options[:expyear] = period_or_date.year.to_s
+        else
+          raise ArgumentError, "period_or_date must be integer months or date with a year"
+        end
 
-        response = perform_request("domain-renew", {
-          :domain => domain, :period => period.to_s })
+        response = perform_request("domain-renew", options)
 
         # need to know what the response contents actually are
         @domain_renew_response = response # for inspection purposes
