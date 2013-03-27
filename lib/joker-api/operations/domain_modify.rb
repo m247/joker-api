@@ -22,16 +22,20 @@ module JokerAPI
         options["admin-c"] = options.delete(:admin_c)
         options["billing-c"] = options.delete(:billing_c)
 
-        options["ns-list"] = options.delete(:ns_list).join(":")
+        if options.has_key?(:ns_list) && options[:ns_list]
+          options["ns-list"] = options.delete(:ns_list).join(":")
+        end
 
-        dnssec = options.delete(:dnssec)
-        options["dnssec"] = "0" if dnssec == false
+        if options.has_key?(:dnssec)
+          dnssec = options.delete(:dnssec)
+          options["dnssec"] = "0" if dnssec == false
 
-        if dnssec
-          options["dnssec"] = "1"
-          dnssec.each_with_index do |obj, idx|
-            break if idx > 5 # not allowed more than 6 entries
-            options["ds-#{idx+1}"] = obj
+          if dnssec
+            options["dnssec"] = "1"
+            dnssec.each_with_index do |obj, idx|
+              break if idx > 5 # not allowed more than 6 entries
+              options["ds-#{idx+1}"] = obj
+            end
           end
         end
 
