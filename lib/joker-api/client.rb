@@ -57,6 +57,32 @@ module JokerAPI
       self
     end
 
+    # Returns the last HTTP request sent
+    # @return [String]
+    def last_http_request
+      req = last_response.request
+      out = "#{req.http_method::METHOD} #{req.uri.request_uri}\n"
+      out += "Host: #{req.uri.host}\nConnection: close\n"
+      req.options[:headers].each do |header, value|
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += ": #{value}\n"
+      end
+
+      out # we only do GET requests so no need to append body, add if needed
+    end
+    # Returns the last HTTP response sent
+    # @return [String]
+    def last_http_response
+      resp = last_response.response
+      out = "HTTP/#{resp.http_version} #{resp.code} #{resp.message}\n"
+      resp.each_header do |header, value|
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += ": #{value}\n"
+      end
+
+      out += "\n#{resp.body}"
+    end
+
     # Returns the last response received.
     # @return [Response]
     def last_response
