@@ -12,11 +12,19 @@ module JokerAPI
     attr_reader :headers, :body
 
     def initialize(response)
+      @httparty_response = response
       headers, body = response.body.split("\n\n", 2)
       parse_headers(headers)
       parse_body(body)
 
       raise AuthorisationError if status_code == AUTHORISATION_ERROR_CODE
+    end
+
+    def request
+      @httparty_response.request
+    end
+    def response
+      @httparty_response.response
     end
 
     def success?
