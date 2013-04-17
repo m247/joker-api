@@ -16,11 +16,22 @@ module JokerAPI
       @@result_poll_interval = interval
     end
 
+    @@user_agent = nil
+    def self.user_agent
+      @@user_agent ||= begin
+        engine  = defined?(RUBY_ENGINE)  ? RUBY_ENGINE.capitalize : "Ruby"
+        "JokerAPI::Client/#{JokerAPI::VERSION} (#{engine} #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}/#{RUBY_PLATFORM})"
+      end
+    end
+
     attr_reader :balance, :tlds
 
     def initialize(username, password, host = 'dmapi.joker.com', options = {})
       @username, @password = username, password
       @default_options = options.merge(:base_uri => HTTParty.normalize_base_uri("https://#{host}"))
+
+      @default_options[:headers] ||= {}
+      @default_options[:headers]['User-Agent'] = self.class.user_agent
 
       @auth_sid = nil
       @balance = 0.00
