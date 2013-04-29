@@ -64,7 +64,7 @@ module JokerAPI
       out = "#{req.http_method::METHOD} #{req.uri.request_uri}\n"
       out += "Host: #{req.uri.host}\nConnection: close\n"
       req.options[:headers].each do |header, value|
-        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].chr.upcase}" }
         out += ": #{value}\n"
       end
 
@@ -76,7 +76,7 @@ module JokerAPI
       resp = last_response.response
       out = "HTTP/#{resp.http_version} #{resp.code} #{resp.message}\n"
       resp.each_header do |header, value|
-        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].upcase}" }
+        out += header.capitalize.gsub(/\-([a-z])/) { |m| "-#{m[1].chr.upcase}" }
         out += ": #{value}\n"
       end
 
