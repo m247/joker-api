@@ -50,7 +50,7 @@ module JokerAPI
       @status_code ||= headers['Status-Code'].to_i
     end
     def status_text
-      @status_text ||= headers['Status-Text']
+      @status_text ||= headers['Status-Text'] || headers['Error']
     end
     def tracking_id
       @tracking_id ||= headers['Tracking-Id']
@@ -65,7 +65,15 @@ module JokerAPI
     private
       def parse_headers(headers_str)
         @headers = headers_str.split("\n").inject({}) do |hash, header|
-          hash.store(*header.split(": ",2))
+          key, value = header.split(": ",2)
+
+          if hash.has_key?(key)
+            hash[key] = Array(hash[key])
+            hash[key] << value
+          else
+            hash[key] = value
+          end
+
           hash
         end
       end
