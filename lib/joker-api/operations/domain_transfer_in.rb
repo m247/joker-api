@@ -33,7 +33,9 @@ module JokerAPI
         options["tech-c"] = options.delete(:tech_c)
         options["owner-email"] = options.delete(:owner_email)
 
-        options["ns-list"] = options.delete(:ns_list).join(":")
+        if options.has_key?(:ns_list)
+          options["ns-list"] = options.delete(:ns_list).join(":")
+        end
 
         response = perform_request(command, options.merge(:domain => domain, 'transfer-auth-id' => auth_key))
         response.success? # we might want to return the proc_id for later retrieval if this will contain
