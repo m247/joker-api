@@ -20,14 +20,30 @@ module JokerAPI
       # @option fields [String] :phone Telephone number in ITU format
       # @option fields [String] :extension Telephone extension. Optional field.
       # @option fields [String] :fax Fax number. Optional field.
+      # @option fields [String] :lang Language for EU contacts. Optional unless :tld is 'eu'.
+      # @option fields [String] :app_purpose Application Purpose for US contact. Optional unless :tld is 'us'.
+      # @option fields [String] :nexus_category Nexus Category for US contact. Optional unless :tld is 'us'.
+      # @option fields [String] :nexus_category_country Nexus Cateory Country for US contact. Optional unless :tld is 'us'.
       # @return [String,False] The contact handle if successful, false on error
       def contact_create(fields = {})
-        fields.assert_valid_keys(:tld, :name, :fname, :lname, :title, :individual, :organization, :email, :address, :city, :state, :postal_code, :country, :phone, :extension, :fax)
+        fields.assert_valid_keys(:tld, :name, :fname, :lname, :title, :individual, :organization, :email,
+          :address, :city, :state, :postal_code, :country, :phone, :extension, :fax,
+          :lang, :app_purpose, :nexus_category, :nexus_category_country)
         raise ArgumentError, ":organization required if :individual is false" if fields[:individual] && fields[:individual] == false && fields[:organization].blank?
         raise ArgumentError, ":name or :fname and :lname are required" if fields[:name].blank? && fields[:fname].blank? && fields[:lname].blank?
 
         [:email, :address, :city, :postal_code, :country, :phone].each do |field|
           raise ArgumentError, "field :#{field} is required" if fields[field].blank?
+        end
+
+        if fields[:tld] == 'eu'
+          raise ArgumentError, "field :lang is required for EU TLD" if fields[:lang].blank?
+        end
+
+        if fields[:tld] == 'us'
+          [:app_purpose, :nexus_category, :nexus_category_country].each do |field|
+            raise ArgumentError, "field :#{field} is required for US TLD" if fields[field].blank?
+          end
         end
 
         fields['individual'] = fields.delete(:individual) ? 'Y' : 'N'
@@ -37,6 +53,10 @@ module JokerAPI
           break if idx > 2
           fields["address-#{idx + 1}"] = addr
         end
+
+        fields['app-purpose'] = fields.delete(:app_purpose) if fields.has_key?(:app_purpose)
+        fields['nexus-category'] = fields.delete(:nexus_category) if fields.has_key?(:nexus_category)
+        fields['nexus-category-country'] = fields.delete(:nexus_category_country) if fields.has_key?(:nexus_category_country)
 
         response = perform_request('contact-create', fields)
         return false unless response.success?
