@@ -38,8 +38,8 @@ module JokerAPI
         end
 
         response = perform_request(command, options.merge(:domain => domain, 'transfer-auth-id' => auth_key))
-        response.success? # we might want to return the proc_id for later retrieval if this will contain
-                          # information which we require to know when a transfer is completed
+        return response.proc_id if response.success?
+        return false
       end
     end
   end
