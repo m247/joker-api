@@ -28,6 +28,8 @@ module JokerAPI
           raise ArgumentError, "field :#{field} is required" if fields[field].blank?
         end
 
+        fields = fields.dup
+
         fields['individual'] = fields.delete(:individual) ? 'Y' : 'N'
         fields['postal-code'] = fields.delete(:postal_code)
 

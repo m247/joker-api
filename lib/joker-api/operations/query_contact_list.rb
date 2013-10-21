@@ -23,7 +23,7 @@ module JokerAPI
       def query_contact_list(pattern, options = {})
         options.assert_valid_keys(VALID_OPTIONS)
 
-        params = DEFAULT_OPTIONS.merge(options)
+        params = DEFAULT_OPTIONS.merge(options) # options are essentially dup'd here
         extended = params.delete(:extended)
 
         params['extended-format'] = extended ? "1" : "0"

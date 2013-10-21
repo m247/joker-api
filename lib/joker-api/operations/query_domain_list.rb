@@ -16,7 +16,7 @@ module JokerAPI
       def query_domain_list(pattern, options = {})
         options.assert_valid_keys(VALID_OPTIONS)
 
-        params = DEFAULT_OPTIONS.merge(options)
+        params = DEFAULT_OPTIONS.merge(options) # options are essentially dup'd here
         params[:pattern] = pattern
         params[:showgrants] = params[:showgrants] ? "1" : "0"
         params[:showstatus] = params[:showstatus] ? "1" : "0"

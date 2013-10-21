@@ -17,7 +17,7 @@ module JokerAPI
       def domain_register(domain, options = {})
         raise ArgumentError, "unsupported TLD" unless self.tlds.any? { |tld| domain.end_with?(".#{tld}") }
         options.assert_valid_keys(VALID_OPTIONS)
-        options = DEFAULT_OPTIONS.merge(options)
+        options = DEFAULT_OPTIONS.merge(options) # options are essentially dup'd here
 
         REQUIRED_OPTIONS.each do |key|
           raise ArgumentError, "option :#{key} is required" if options[key].blank?

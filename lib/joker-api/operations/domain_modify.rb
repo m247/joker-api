@@ -18,6 +18,8 @@ module JokerAPI
         options.assert_valid_keys(VALID_OPTIONS)
         return true if options.empty?
 
+        options = options.dup
+
         options["tech-c"] = options.delete(:tech_c)
         options["admin-c"] = options.delete(:admin_c)
         options["billing-c"] = options.delete(:billing_c)

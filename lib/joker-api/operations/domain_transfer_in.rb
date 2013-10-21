@@ -22,6 +22,7 @@ module JokerAPI
       # @option options [Array<String>] :ns_list List of nameservers to set on the domain
       def domain_transfer_in(domain, auth_key, options = {})
         options.assert_valid_keys(VALID_OPTIONS)
+        options = options.dup
         command = options.slice(EXTENDED_OPTIONS).empty? ?
           'domain-transfer-in' : 'domain-transfer-in-reseller'
 
