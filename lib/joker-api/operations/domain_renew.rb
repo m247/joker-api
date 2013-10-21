@@ -14,9 +14,6 @@ module JokerAPI
         end
 
         response = perform_request("domain-renew", options)
-
-        # need to know what the response contents actually are
-        @domain_renew_response = response # for inspection purposes
         response.success?
       end
     end
