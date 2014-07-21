@@ -28,5 +28,7 @@ module JokerAPI
     autoload :QueryWhois,           File.expand_path('../operations/query_whois.rb', __FILE__)
 
     autoload :ResultRetrieve,       File.expand_path('../operations/result_retrieve.rb', __FILE__)
+    
+    autoload :WhoisAccreditation,   File.expand_path('../operations/whois_accreditation.rb', __FILE__)
   end
 end

@@ -129,6 +129,8 @@ module JokerAPI
     include Operations::QueryWhois
 
     include Operations::ResultRetrieve
+    
+    include Operations::WhoisAccreditation
 
     # @param [String] domain Domain name
     # @param [Boolean] value Enable/disable autorenew
