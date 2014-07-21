@@ -196,9 +196,11 @@ module JokerAPI
       # @yieldparam result [Hash] The 'result-retrieve' headers as a hash
       # @return [Object,Boolean] False on errors, whatever the block results on success
       def wait_for_result(response)
+        tries = 0
         begin
           sleep result_poll_interval
           result = result_retrieve(response)
+          tries += 1
 
           case result["Completion-Status"]
           when "ack"  # Request Processed
@@ -209,7 +211,8 @@ module JokerAPI
             return false
           end
         rescue IncompleteRequest
-          retry
+          retry unless tries > 4
+          raise
         end
       end
   end
