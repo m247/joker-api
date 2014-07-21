@@ -50,6 +50,7 @@ module JokerAPI
 
         fields['individual'] = fields.delete(:individual) ? 'Y' : 'N'
         fields['postal-code'] = fields.delete(:postal_code)
+        fields['name'] ||= [fields.delete(:fname), fields.delete(:lname)].compact.join(" ")
 
         Array(fields.delete(:address)).each_with_index do |addr, idx|
           break if idx > 2
