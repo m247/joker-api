@@ -206,7 +206,7 @@ module JokerAPI
           when "ack"  # Request Processed
             return yield result
           when "?"    # Request still pending
-            raise IncompleteRequest
+            raise IncompleteRequest.new(response)
           else        # dunno really
             return false
           end

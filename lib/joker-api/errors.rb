@@ -3,8 +3,8 @@ module JokerAPI
   class ObjectNotFound < RuntimeError; end
   class IncompleteRequest < RuntimeError
     attr_reader :response
-    def initialize(message, response = nil)
-      super message
+    def initialize(response = nil)
+      super "Incomplete response from command, did not recevied acknowledgement from Joker in time"
       @response = response
     end
   end
