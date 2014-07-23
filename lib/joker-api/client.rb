@@ -46,6 +46,16 @@ module JokerAPI
     def set_result_poll_interval(interval)
       @result_poll_interval = interval
     end
+    
+    def with_result_poll_interval(interval)
+      rpi = @result_poll_interval
+      begin
+        @result_poll_interval = interval
+        return yield self
+      ensure
+        @result_poll_interval = rpi
+      end
+    end
 
     def login
       response = perform_request('login', {:username => @username, :password => @password})
