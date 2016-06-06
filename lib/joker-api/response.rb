@@ -44,7 +44,7 @@ module JokerAPI
       @account_balance ||= headers['Account-Balance'].to_f
     end
     def proc_id
-      @proc_id ||= headers['Proc-ID']
+      @proc_id ||= headers['Proc-Id']
     end
     def status_code
       @status_code ||= headers['Status-Code'].to_i
