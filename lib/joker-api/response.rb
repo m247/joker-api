@@ -66,6 +66,7 @@ module JokerAPI
       def parse_headers(headers_str)
         @headers = headers_str.split("\n").inject({}) do |hash, header|
           key, value = header.split(": ",2)
+          key = key.downcase.capitalize.gsub(/\-([a-z])/i) { |m| m[0] + m[1].upcase }
 
           if hash.has_key?(key)
             hash[key] = Array(hash[key])
