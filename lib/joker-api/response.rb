@@ -1,6 +1,7 @@
 module JokerAPI
   class Response
-    AUTHORISATION_ERROR_CODE = -401
+    AUTHORISATION_HTTP_ERROR_CODE = 401
+    AUTHORISATION_ERROR_CODE = 2200
 
     class Error
       attr_reader :code, :message
@@ -17,7 +18,7 @@ module JokerAPI
       parse_headers(headers)
       parse_body(body)
 
-      raise AuthorisationError if status_code == AUTHORISATION_ERROR_CODE
+      raise AuthorisationError if status_code == AUTHORISATION_ERROR_CODE && response.code == AUTHORISATION_HTTP_ERROR_CODE
     end
 
     def request
