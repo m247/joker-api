@@ -15,18 +15,20 @@ module JokerAPI
       #                      a Hash of nameservers keyed by name is returned with the
       #                      IP address details as values of the hash.
       def query_ns_list(pattern, full = false)
-        response = perform_request("query-ns-list",
-          {:pattern => pattern, :full => full ? "1" : "0"})
+        response = perform_request('query-ns-list',
+          :pattern => pattern,
+          :full    => full ? '1' : '0')
 
         results = full ? {} : []
+        # TODO: response.body can be nil here, what does that mean?
         response.body.each_line do |line|
           name, ipv4, ipv6 = line.strip.split("\t", 3)
 
-          ipv4 = nil if ipv4 && ipv4 == "-"
-          ipv6 = nil if ipv6 && ipv6 == "-"
+          ipv4 = nil if ipv4 && ipv4 == '-'
+          ipv6 = nil if ipv6 && ipv6 == '-'
 
           if full
-            results[name] = {:ipv4 => ipv4, :ipv6 => ipv6}
+            results[name] = { :ipv4 => ipv4, :ipv6 => ipv6 }
           else
             results << name
           end
